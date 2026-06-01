@@ -10,7 +10,7 @@ AI视频监控系统使用PostgreSQL作为主数据库，存储视频元数据�
 ```bash
 DB_HOST=localhost           # 数据库主机
 DB_PORT=5432               # 数据库端口  
-DB_NAME=ai_watchdog        # 数据库名称
+DB_NAME=vistrat        # 数据库名称
 DB_USER=postgres           # 用户名
 DB_PASSWORD=password       # 密码
 DB_POOL_SIZE=5            # 连接池大小
@@ -191,7 +191,7 @@ CREATE TRIGGER update_video_files_updated_at
 ### 初始化数据库
 ```bash
 # 执行schema.sql创建表结构
-psql -h localhost -U postgres -d ai_watchdog -f backend/database/schema.sql
+psql -h localhost -U postgres -d vistrat -f backend/database/schema.sql
 ```
 
 ### 从文件系统迁移

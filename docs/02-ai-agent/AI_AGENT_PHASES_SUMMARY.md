@@ -445,7 +445,7 @@ const { transcript, isListening, ... } = useSpeechRecognition({
 
 ## 📞 联系方式
 
-项目仓库: http://gitlab.example.com/bestTeam/video-multi.git
+项目仓库: http://gitlab.example.com/your-org/vistrat.git
 
 ---
 

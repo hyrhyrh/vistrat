@@ -782,7 +782,7 @@ QWEN_API_KEY=sk-xxx
 
 # 数据库配置
 DB_HOST=localhost
-DB_NAME=ai_watchdog
+DB_NAME=vistrat
 DB_USER=postgres
 DB_PASSWORD=xxx
 

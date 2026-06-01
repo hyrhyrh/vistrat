@@ -179,7 +179,7 @@ async def test_ai_config_direct(
 
             # 保存图片到临时文件（复合检测需要文件路径）
             content = await image.read()
-            temp_dir = Path(tempfile.gettempdir()) / "ai_watchdog_test"
+            temp_dir = Path(tempfile.gettempdir()) / "vistrat_test"
             temp_dir.mkdir(exist_ok=True)
 
             image_path = temp_dir / f"test_{os.urandom(8).hex()}.jpg"
