@@ -39,27 +39,57 @@
 
 ## 🏗️ 架构概览
 
+Vistrat 采用**三层分布式架构**，把算力密集型的 VLM + Grounding DINO 推理抽到独立的中台 GPU 服务器，让边缘盒子和 CPU 主机各司其职。
+
+```mermaid
+flowchart TB
+    subgraph T1["Tier 1 · 边缘盒子 / 摄像头"]
+        CAM[RTSP 摄像头]
+        EDGE[AI 边缘盒子]
+    end
+
+    subgraph T2["Tier 2 · 中台推理服务 (GPU)"]
+        INFER["vistrat-inference<br/>FastAPI + Grounding DINO"]
+        VLM["云端 VLM<br/>Qwen-VL / Moonshot"]
+        INFER -. HTTPS .-> VLM
+    end
+
+    subgraph T3["Tier 3 · 业务服务器 (CPU)"]
+        FE["React 前端<br/>(Ant Design + SWR)"]
+        BE["FastAPI 主后端<br/>业务编排 / 告警 / 权限"]
+        MTX[mediamtx<br/>RTSP→HLS + 录制]
+        PG[(PostgreSQL)]
+        ES[(Elasticsearch)]
+        RD[(Redis)]
+        MN[(MinIO)]
+        BE --- PG
+        BE --- ES
+        BE --- RD
+        BE --- MN
+        BE --- MTX
+        FE -. WebSocket .- BE
+    end
+
+    CAM -- RTSP --> MTX
+    CAM -- RTSP --> EDGE
+    EDGE -- 抽帧 --> BE
+    BE -- 帧 + 预签名 URL --> INFER
+    INFER -- bbox + 场景判定 --> BE
+    BE -- 告警 + 视频片段 --> FE
+
+    classDef gpu fill:#fff0d4,stroke:#d97706,stroke-width:2px;
+    classDef cpu fill:#dbeafe,stroke:#2563eb,stroke-width:2px;
+    classDef edge fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    class INFER,VLM gpu;
+    class FE,BE,MTX,PG,ES,RD,MN cpu;
+    class CAM,EDGE edge;
 ```
-┌──────────────┐  HTTP/WebSocket  ┌──────────────────────────┐
-│ React 前端   │ ───────────────→ │      FastAPI 后端         │
-│ (Ant Design) │                  │  ┌──────────────────┐    │
-└──────────────┘                  │  │ 业务 API / WS     │    │
-                                  │  │ 视频分析编排器    │    │
-                                  │  │ AI 模型路由       │    │
-                                  │  │ 告警广播          │    │
-                                  │  └──────────────────┘    │
-                                  └──┬───────────────┬───────┘
-              ┌──────────────────────┘               │
-              ▼                                      ▼
-   ┌─────────────────┐                ┌──────────────────────────┐
-   │  数据/存储       │                │   外部能力               │
-   │ • PostgreSQL    │                │ • Qwen-VL  (云端)        │
-   │ • Elasticsearch │                │ • Moonshot (云端)        │
-   │ • Redis         │                │ • vLLM     (本地 GPU)    │
-   │ • MinIO         │                │ • Grounding DINO (bbox) │
-   │ • mediamtx      │                │ • 企业微信通知           │
-   └─────────────────┘                └──────────────────────────┘
-```
+
+**关键设计**：
+- **Tier 2 无状态**：A100 只跑推理，不存图、不存视频、不存业务数据
+- **预签名 URL 拉帧**：业务后端把帧落 MinIO 后生成 15 分钟预签名 URL 交给推理服务，避免大 body POST 和密钥暴露
+- **降级开关**：推理服务不可达时自动切纯 VLM 文字路径，告警照发只是没有 bbox
+- **片段回放本地化**：mediamtx 录制目录在 CPU 主机，ClipService 直接读本地文件 ffmpeg concat copy 出 MP4，零跨网络
 
 详细架构与设计模式：[docs/01-architecture/](./docs/01-architecture/)
 
