@@ -1,0 +1,216 @@
+# Claude Code 本地设置
+.claude/
+
+# E2E 测试运行产物
+tests/e2e/artifacts/
+tests/e2e/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+backend/Untitled.ipynb
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+scripts/deploy/.env.production
+scripts/deploy/packages/
+
+# Logs
+*.log
+logs/
+backend/code.log
+
+# Temporary files
+temp_*
+*.tmp
+output_frame.*
+
+# Video files (警告视频除外)
+backend/测试视频/
+backend/uploads/*.mp4
+backend/uploads/*.avi
+backend/uploads/*.mov
+backend/uploads/*.wmv
+backend/uploads/*.flv
+
+# Keep warning videos for monitoring
+!backend/video_warning/
+backend/video_warning/*.mp4
+backend/video_warning/*.jpg
+backend/archive/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Docker
+.dockerignore
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Project specific
+backend/temp_frame*.jpg
+backend/temp_*
+backend/output_*
+*.bak
+*.backup
+
+# Test outputs
+test_output/
+backend/test_*.mp4
+
+# 存储目录（保留结构，忽略数据）
+storage/*
+!storage/.gitkeep
+!storage/*/.gitkeep
+
+# 废弃模块中的上传文件
+backend/videos/uploads/
+
+# 遗留数据目录
+data/
+
+# 发布目录
+release/
+backend/backups/
+backend/temp/
+
+# ===== Open-source repo specific =====
+# Secrets / local env
+**/secrets.yml
+**/secrets.yaml
+*.pem
+*.key
+!frontend/src/**/*.key.ts
+
+# Lockfiles intentionally tracked (uncomment if you want to ignore)
+# package-lock.json
+# uv.lock

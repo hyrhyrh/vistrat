@@ -1,0 +1,91 @@
+{
+  "video_alerts": {
+    "mappings": {
+      "properties": {
+        "task_id": { "type": "keyword" },
+        "video_id": { "type": "keyword" },
+        "stream_id": { "type": "keyword" },
+        "video_name": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "camera_name": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "frame_index": { "type": "integer" },
+        "timestamp": { "type": "float" },
+        "video_time": { "type": "keyword" },
+        "datetime": { "type": "date" },
+        "created_at": { "type": "date" },
+        "template_name": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "algorithm_name": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "algorithm_category": { "type": "keyword" },
+        "analysis_type": { "type": "keyword" },
+        "ai_response": { "type": "text" },
+        "confidence": { "type": "float" },
+        "description": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "alert_content": { "type": "text" },
+        "detection_details": { "type": "object", "dynamic": true },
+        "severity": { "type": "keyword" },
+        "alert_level": { "type": "keyword" },
+        "priority": { "type": "integer" },
+        "category": { "type": "keyword" },
+        "location": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "resolved": { "type": "boolean" },
+        "image_url": { "type": "keyword" },
+        "metadata": { "type": "object", "dynamic": true },
+        "data_type": { "type": "keyword" }
+      }
+    }
+  },
+  "video_frame_results": {
+    "mappings": {
+      "properties": {
+        "task_id": { "type": "keyword" },
+        "video_id": { "type": "keyword" },
+        "frame_index": { "type": "integer" },
+        "timestamp": { "type": "float" },
+        "video_time": { "type": "keyword" },
+        "template_id": { "type": "keyword" },
+        "template_name": {
+          "type": "text",
+          "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } }
+        },
+        "ai_response": { "type": "text" },
+        "confidence": { "type": "float" },
+        "has_alert": { "type": "boolean" },
+        "analyzed_at": { "type": "date" },
+        "image_url": { "type": "keyword" },
+        "detection_objects": {
+          "type": "nested",
+          "properties": {
+            "class_name": { "type": "keyword" },
+            "confidence": { "type": "float" },
+            "bbox": {
+              "type": "object",
+              "properties": {
+                "x": { "type": "float" },
+                "y": { "type": "float" },
+                "width": { "type": "float" },
+                "height": { "type": "float" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

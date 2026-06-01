@@ -1,0 +1,76 @@
+# 本地开发中间件 — 仅 PG/Redis/ES/MinIO
+# 用法: docker compose -f docker-compose.dev.yml up -d
+# 端口避开 navpilot (5432/6379/9000)
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: vision_dev_postgres
+    environment:
+      POSTGRES_DB: vision_db
+      POSTGRES_USER: vision
+      POSTGRES_PASSWORD: vision123
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "15432:5432"
+    volumes:
+      - vision_dev_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vision -d vision_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: vision_dev_redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - vision_dev_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: vision_dev_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - "19200:9200"
+    volumes:
+      - vision_dev_es:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: vision_dev_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "19000:9000"
+      - "19001:9001"
+    volumes:
+      - vision_dev_minio:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  vision_dev_pg:
+  vision_dev_redis:
+  vision_dev_es:
+  vision_dev_minio:

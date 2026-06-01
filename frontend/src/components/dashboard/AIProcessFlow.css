@@ -1,0 +1,501 @@
+/* AI流程可视化组件样式 */
+.ai-process-flow-card {
+  background: linear-gradient(135deg, rgba(15, 52, 96, 0.95) 0%, rgba(8, 28, 52, 0.95) 100%);
+  border: 1px solid rgba(24, 144, 255, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.ai-process-flow-card .ant-card-head {
+  background: rgba(24, 144, 255, 0.1);
+  border-bottom: 1px solid rgba(24, 144, 255, 0.2);
+  padding: 8px 16px;
+}
+
+.ai-process-flow-card .ant-card-head-title {
+  color: #fff;
+  font-weight: 600;
+}
+
+.ai-process-flow-card .ant-card-body {
+  padding: 12px;
+  height: 100%;
+  min-height: 160px;
+}
+
+/* 流程标题 */
+.flow-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.flow-title-icon {
+  color: #1890ff;
+  font-size: 16px;
+}
+
+.flow-status {
+  margin-left: auto;
+}
+
+.flow-status .ant-badge-status-dot {
+  background-color: #1890ff;
+}
+
+.flow-status .ant-badge-status-text {
+  color: #ffffff !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 主容器 */
+.ai-flow-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* 背景网格 */
+.flow-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+}
+
+.neural-grid {
+  background-image: 
+    linear-gradient(rgba(24, 144, 255, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 144, 255, 0.3) 1px, transparent 1px);
+  background-size: 20px 20px;
+  width: 100%;
+  height: 100%;
+  animation: gridFloat 20s ease-in-out infinite;
+}
+
+@keyframes gridFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-10px, -5px); }
+}
+
+/* 节点容器 */
+.flow-nodes {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 10px 8px;
+  z-index: 10;
+}
+
+/* 节点包装器 */
+.flow-node-wrapper {
+  position: relative;
+  animation: nodeAppear 0.8s ease-out forwards;
+  animation-delay: calc(var(--node-index) * 0.1s);
+  opacity: 0;
+}
+
+@keyframes nodeAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 流程节点 */
+.flow-node {
+  position: relative;
+  width: 70px;
+  height: 85px;
+  background: linear-gradient(145deg, rgba(24, 144, 255, 0.15) 0%, rgba(15, 52, 96, 0.25) 100%);
+  border: 2px solid rgba(24, 144, 255, 0.3);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.flow-node:hover {
+  transform: translateY(-5px) scale(1.05);
+  border-color: rgba(24, 144, 255, 0.6);
+  box-shadow: 0 10px 30px rgba(24, 144, 255, 0.3) !important;
+}
+
+/* AI核心节点特殊样式 */
+.ai-core-node {
+  width: 85px;
+  height: 100px;
+  background: linear-gradient(145deg, rgba(138, 43, 226, 0.2) 0%, rgba(75, 0, 130, 0.3) 100%);
+  border-color: rgba(138, 43, 226, 0.5);
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.4);
+}
+
+.ai-core-node:hover {
+  border-color: rgba(138, 43, 226, 0.8);
+  box-shadow: 0 0 40px rgba(138, 43, 226, 0.6) !important;
+}
+
+/* 节点图标 */
+.node-icon {
+  font-size: 16px;
+  color: #1890ff;
+  transition: all 0.3s ease;
+}
+
+.ai-core-node .node-icon {
+  font-size: 18px;
+  color: #8a2be2;
+}
+
+.flow-node:hover .node-icon {
+  transform: scale(1.2);
+}
+
+/* 节点标题 */
+.node-title {
+  color: #fff;
+  font-size: 9px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.1;
+  margin: 2px 0;
+}
+
+.ai-core-node .node-title {
+  font-weight: 600;
+  color: #e6e6fa;
+}
+
+/* 进度条 */
+.node-progress {
+  width: 100%;
+  margin: 2px 0;
+}
+
+.node-progress .ant-progress-bg {
+  transition: all 0.3s ease;
+}
+
+/* 状态指示 */
+.node-status {
+  display: flex;
+  justify-content: center;
+}
+
+/* AI核心特效 */
+.ai-core-effects {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 2px solid rgba(138, 43, 226, 0.6);
+  border-radius: 50%;
+  animation: aiPulse 2s ease-in-out infinite;
+}
+
+.pulse-ring.delay-1 {
+  animation-delay: 0.3s;
+  border-color: rgba(138, 43, 226, 0.4);
+}
+
+.pulse-ring.delay-2 {
+  animation-delay: 0.6s;
+  border-color: rgba(138, 43, 226, 0.2);
+}
+
+@keyframes aiPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 神经元连接 */
+.neural-connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.neural-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(24, 144, 255, 0.6), transparent);
+  opacity: 0;
+  animation: neuralPulse 3s ease-in-out infinite;
+}
+
+.neural-line-1 {
+  top: 20%;
+  left: -100%;
+  width: 300%;
+  height: 1px;
+  animation-delay: 0s;
+}
+
+.neural-line-2 {
+  top: 50%;
+  left: -100%;
+  width: 300%;
+  height: 1px;
+  animation-delay: 1s;
+}
+
+.neural-line-3 {
+  top: 80%;
+  left: -100%;
+  width: 300%;
+  height: 1px;
+  animation-delay: 2s;
+}
+
+@keyframes neuralPulse {
+  0%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 连接线 */
+.flow-connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.connection-line {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.connection-path {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(24, 144, 255, 0.1) 0%, 
+    rgba(24, 144, 255, 0.3) 50%, 
+    rgba(24, 144, 255, 0.1) 100%
+  );
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+/* 流动粒子 */
+.flow-particle {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #1890ff 0%, rgba(24, 144, 255, 0.8) 60%, transparent 100%);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: particleGlow 1s ease-in-out infinite alternate;
+  box-shadow: 0 0 10px rgba(24, 144, 255, 0.8);
+}
+
+@keyframes particleGlow {
+  0% {
+    opacity: 0.6;
+    transform: translateY(-50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+/* 全局指标覆盖层 */
+.flow-metrics-overlay {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  z-index: 15;
+}
+
+.global-metrics {
+  display: flex;
+  gap: 8px;
+  background: rgba(15, 52, 96, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(24, 144, 255, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.global-metrics .metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.global-metrics .metric-label {
+  color: #87ceeb;
+  font-size: 9px;
+  font-weight: 400;
+}
+
+.global-metrics .metric-value {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.global-metrics .metric-value.highlight {
+  color: #1890ff;
+  text-shadow: 0 0 8px rgba(24, 144, 255, 0.6);
+}
+
+/* 节点提示框 */
+.node-tooltip {
+  color: #fff;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #1890ff;
+}
+
+.tooltip-desc {
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.tooltip-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltip-metrics .metric-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.tooltip-metrics .metric-key {
+  color: #87ceeb;
+}
+
+.tooltip-metrics .metric-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+/* 状态样式 */
+.flow-node.processing {
+  border-color: rgba(24, 144, 255, 0.5);
+  box-shadow: 0 0 15px rgba(24, 144, 255, 0.3);
+}
+
+.flow-node.completed {
+  border-color: rgba(82, 196, 26, 0.5);
+  box-shadow: 0 0 15px rgba(82, 196, 26, 0.3);
+}
+
+.flow-node.error {
+  border-color: rgba(255, 77, 79, 0.5);
+  box-shadow: 0 0 15px rgba(255, 77, 79, 0.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+  .flow-node {
+    width: 70px;
+    height: 90px;
+  }
+  
+  .ai-core-node {
+    width: 85px;
+    height: 105px;
+  }
+  
+  .node-title {
+    font-size: 9px;
+  }
+  
+  .node-icon {
+    font-size: 18px;
+  }
+  
+  .ai-core-node .node-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .flow-node {
+    width: 60px;
+    height: 80px;
+  }
+  
+  .ai-core-node {
+    width: 75px;
+    height: 95px;
+  }
+  
+  .global-metrics {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+  
+  .global-metrics .metric-label {
+    font-size: 9px;
+  }
+  
+  .global-metrics .metric-value {
+    font-size: 11px;
+  }
+}

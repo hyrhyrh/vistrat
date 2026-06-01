@@ -1,0 +1,508 @@
+/* 实时预览页面模块化样式 */
+
+.livePreviewContainer {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 指标头部区域 */
+.metricsHeader {
+  margin-bottom: 24px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.metricCard {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+}
+
+.metricIcon {
+  font-size: 24px;
+  margin-right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.streamsIcon {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.onlineIcon {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.algorithmsIcon {
+  background-color: #fff1f0;
+  color: #fa541c;
+}
+
+.todayAlertsIcon {
+  background-color: #fff2e8;
+  color: #fa8c16;
+}
+
+.totalAlertsIcon {
+  background-color: #fef9e8;
+  color: #faad14;
+}
+
+.metricContent {
+  flex: 1;
+}
+
+.metricValue {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.metricLabel {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 主要内容区域 */
+.mainContent {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 视频监控卡片 */
+.videoMonitorCard {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 视频头部区域 */
+.videoHeaderSection {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafafa;
+}
+
+.videoTitle {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  gap: 8px;
+}
+
+.streamCount {
+  margin-left: 8px;
+}
+
+/* 布局控制 */
+.layoutControlsCenter {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.layoutControls {
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 轮播控制 */
+.carouselControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageInfo {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.navBtn {
+  border-color: #d9d9d9;
+}
+
+.navBtn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.autoSwitch {
+  margin-left: 8px;
+}
+
+/* 视频网格 */
+.videoGridContainer {
+  padding: 24px;
+  background: #000;
+}
+
+.videoGrid {
+  display: grid;
+  gap: 8px;
+  height: 500px;
+}
+
+.layoutSingle {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.layoutQuad {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.layoutNine {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.videoCell {
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #333;
+}
+
+.singleScreenCell {
+  border: 2px solid #1890ff;
+}
+
+.videoContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoHeader {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.videoPlayer {
+  flex: 1;
+  position: relative;
+}
+
+.videoPlaceholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  background: #1a1a1a;
+}
+
+.emptyCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  background: #0d0d0d;
+}
+
+/* 告警卡片 */
+.alertsCard {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.alertsHeader {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.alertsTitle {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  gap: 8px;
+}
+
+.alertsIcon {
+  color: #fa541c;
+}
+
+.alertsCount {
+  margin-left: 8px;
+}
+
+.alertsControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.refreshBtn {
+  color: #666;
+}
+
+.refreshBtn:hover {
+  color: #1890ff;
+}
+
+.autoRefreshIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #999;
+}
+
+.refreshDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #52c41a;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.alertsContent {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.noAlerts {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+}
+
+.noAlertsIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.noAlertsDesc {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* 告警列表 */
+.alertsList {
+  padding: 0 !important;
+}
+
+.alertItem {
+  padding: 16px 24px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.alertItem:hover {
+  background-color: #fafafa !important;
+}
+
+.alertItem.priorityHigh {
+  border-left: 4px solid #fa541c;
+}
+
+.alertItem.priorityMedium {
+  border-left: 4px solid #faad14;
+}
+
+.alertItem.priorityLow {
+  border-left: 4px solid #1890ff;
+}
+
+.alertItem.priorityCritical {
+  border-left: 4px solid #ff4d4f;
+}
+
+.alertItem.safetyHelmet {
+  background: linear-gradient(90deg, rgba(255, 240, 240, 0.3) 0%, transparent 100%);
+}
+
+.alertItem.reflectiveVest {
+  background: linear-gradient(90deg, rgba(240, 255, 240, 0.3) 0%, transparent 100%);
+}
+
+.alertItemContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alertThumbnail {
+  width: 60px;
+  height: 40px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.alertThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.alertThumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9d9d9;
+}
+
+.typeIcon {
+  font-size: 14px;
+}
+
+.typeIcon.safety {
+  color: #fa541c;
+}
+
+.typeIcon.vest {
+  color: #52c41a;
+}
+
+.typeIcon.general {
+  color: #faad14;
+}
+
+.alertMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.alertInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alertTitle {
+  font-weight: 600;
+  color: #262626;
+  font-size: 14px;
+}
+
+.alertDetails {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #666;
+}
+
+.location {
+  flex: 1;
+}
+
+.confidence {
+  color: #1890ff;
+}
+
+.alertTime {
+  font-size: 12px;
+  color: #999;
+}
+
+.alertIndex {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .metricsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .layoutNine {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .livePreviewContainer {
+    padding: 16px;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .videoHeaderSection {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .layoutControlsCenter {
+    justify-content: flex-start;
+  }
+
+  .carouselControls {
+    justify-content: center;
+  }
+
+  .layoutQuad,
+  .layoutNine {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+  }
+
+  .videoGrid {
+    height: auto;
+    min-height: 400px;
+  }
+}

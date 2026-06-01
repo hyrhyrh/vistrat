@@ -1,0 +1,315 @@
+services:
+  # 存储目录权限初始化服务(自动执行,无需手动干预)
+  storage-init:
+    image: alpine:latest
+    container_name: vision_storage_init
+    volumes:
+      - ./storage:/storage
+    command: >
+      sh -c "
+        echo '🚀 自动初始化存储目录权限...' &&
+        mkdir -p /storage/elasticsearch /storage/postgres /storage/redis /storage/minio /storage/uploads /storage/data/prompts /storage/logs /storage/video_warning /storage/archive &&
+        chown -R 1000:1000 /storage/elasticsearch && chmod -R 755 /storage/elasticsearch && echo '✅ Elasticsearch: 1000:1000' &&
+        chown -R 999:999 /storage/postgres && chmod -R 700 /storage/postgres && echo '✅ PostgreSQL: 999:999' &&
+        chown -R 999:999 /storage/redis && chmod -R 755 /storage/redis && echo '✅ Redis: 999:999' &&
+        chown -R 1000:1000 /storage/minio && chmod -R 755 /storage/minio && echo '✅ MinIO: 1000:1000' &&
+        chown -R 1000:1000 /storage/uploads /storage/data /storage/logs /storage/video_warning /storage/archive && chmod -R 755 /storage/uploads /storage/data /storage/logs /storage/video_warning /storage/archive && echo '✅ Backend: 1000:1000' &&
+        echo '✅ 存储目录权限初始化完成!' &&
+        ls -la /storage/
+      "
+    restart: "no"
+
+  vllm:
+    # 使用 vLLM 官方提供的预构建镜像，包含 OpenAI API
+    image: vllm/vllm-openai:latest
+    container_name: vision_vllm
+    runtime: nvidia
+    # 容器启动时执行的命令
+    # 我们使用环境变量 ${...} 来动态传入模型和参数
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+    volumes:
+      # 挂载本地模型目录，请确认模型文件夹名称
+      - /home/video/model:/models:ro
+    # 端口映射：将容器的 8000 端口映射到主机的 8000 端口
+    ports:
+      - "8000:8000"
+    command: >
+      --model ${MODEL_NAME}
+      --served-model-name qwen3-vl-4b
+      --dtype half
+      --max-model-len 4608
+      --gpu-memory-utilization 0.85
+      --trust-remote-code
+      --limit-mm-per-prompt '{"image": 3}'
+      --enforce-eager
+      --api-key ${VLLM_API_KEY:-sk-xxxxxxxxxxxxxxxxxxxx}
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 3
+      start_period: 180s
+    # 环境变量文件
+    env_file:
+      - .env
+    # 关键：GPU 访问权限
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              # 使用所有可用的 GPU
+              count: all
+
+  # PostgreSQL数据库服务
+  postgres:
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+    image: postgres:16
+    container_name: vision_postgres
+    # 【生产环境安全配置】解决 AppArmor/SELinux 限制导致的 popen failure
+    security_opt:
+      - seccomp:unconfined        # 允许所有系统调用
+      - apparmor:unconfined       # 禁用 AppArmor 限制
+    cap_add:
+      - SYS_ADMIN                 # 添加系统管理权限
+      - DAC_OVERRIDE              # 覆盖文件权限检查
+    privileged: false             # 不使用特权模式(安全考虑)
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-vision_db}
+      POSTGRES_USER: ${POSTGRES_USER:-vision}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vision123}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./storage/postgres:/var/lib/postgresql/data
+      # 注意: 不再挂载schema.sql到docker-entrypoint-initdb.d
+      # 数据库初始化完全由backend程序的init_database()函数控制
+      # 这样可以确保清理残留对象后正确执行schema.sql
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  # MinIO对象存储服务
+  minio:
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+    image: minio/minio:latest
+    container_name: vision_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      # 允许使用容器名作为hostname访问（解决vLLM内网访问问题）
+      MINIO_DOMAIN: vision_minio
+    ports:
+      - "9010:9000"      # MinIO API
+      - "9011:9001"      # MinIO Console
+    volumes:
+      - ./storage/minio:/data
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis缓存服务
+  redis:
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+    image: redis:7-alpine
+    container_name: vision_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./storage/redis:/data
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # mediamtx 媒体服务器 - RTSP转HLS + 滚动录制
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: vision_mediamtx
+    environment:
+      - MTX_API=true
+      - MTX_APIADDRESS=:9997
+      - MTX_HLSADDRESS=:8888
+      - MTX_RTSPADDRESS=:8554
+      - MTX_HLSVARIANT=lowLatency
+      - MTX_HLSSEGMENTDURATION=1s
+      - MTX_HLSSEGMENTCOUNT=7
+      - MTX_HLSALWAYSREMUX=false
+    ports:
+      - "8554:8554"     # RTSP
+      - "8888:8888"     # HLS
+      - "9997:9997"     # Control API
+    volumes:
+      # 配置文件：启用滚动录制（all_others 兜底），env 变量与 yml 并存时 yml 优先
+      - ./mediamtx.yml:/mediamtx.yml:ro
+      # 录制根目录，按 {path}/{timestamp}.mp4 组织，保留 120s 滚动窗口
+      - ./data/recordings:/recordings
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9997/v3/paths/list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Elasticsearch分析结果存储服务
+  elasticsearch:
+    depends_on:
+      storage-init:
+        condition: service_completed_successfully
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: vision_elasticsearch
+    user: "1000:1000"  # 使用非root用户运行,避免权限问题
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./storage/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 后端API服务
+  backend:
+    # build: ./backend
+    image: vistrat/vision:backend-7.0
+    container_name: vision_backend
+    ports:
+      - "16532:16532"
+    volumes:
+      - ./storage/uploads:/app/uploads
+      - ./storage/data:/app/data
+      - ./storage/logs:/app/logs
+      - ./storage/video_warning:/app/video_warning
+      - ./storage/archive:/app/archive
+      # mediamtx 录制目录（只读）— ClipService 扫描 segment 用
+      - ./data/recordings:/recordings:ro
+    # 加载.env文件中的所有环境变量
+    env_file:
+      - .env
+    environment:
+      # Docker容器内部服务地址覆盖配置
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
+      - MINIO_SECURE=false
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=2
+      - REDIS_PREFIX=multi_watchdog
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ES_SSL=false
+      - MEDIAMTX_HOST=mediamtx
+      - MEDIAMTX_API_PORT=9997
+      - MEDIAMTX_HLS_PORT=8888
+      - MEDIAMTX_RTSP_PORT=8554
+
+      # Vistrat 推理服务（A100 Tier 2）— A100 部署在独立机器
+      # 不在此 compose 里启 detector 容器；默认 host.docker.internal 方便本地开发
+      - INFERENCE_ENABLED=${INFERENCE_ENABLED:-true}
+      - INFERENCE_BASE_URL=${INFERENCE_BASE_URL:-http://host.docker.internal:8100}
+      - INFERENCE_API_KEY=${INFERENCE_API_KEY:-}
+      - INFERENCE_TIMEOUT=${INFERENCE_TIMEOUT:-30}
+
+      # 应用运行配置
+      - PYTHONPATH=/app
+      - HOST=0.0.0.0
+      - PORT=16532
+      - ENV=production
+      - DEBUG=false
+      - RELOAD=false
+      - LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mediamtx:
+        condition: service_healthy
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:16532/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 前端Web服务
+  frontend:
+    image: vistrat/vision:frontend-7.0
+    container_name: vision_frontend
+    ports:
+      - "3009:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:16532
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    networks:
+      - vision-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+# 网络定义
+networks:
+  vision-network:
+    driver: bridge

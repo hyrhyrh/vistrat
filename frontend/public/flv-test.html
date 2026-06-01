@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FLV播放器测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        video {
+            width: 800px;
+            height: 600px;
+            background-color: #000;
+            display: block;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #logs {
+            background: #f5f5f5;
+            padding: 15px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>HTTP-FLV 播放器测试页面</h1>
+
+    <div>
+        <button onclick="startPlay()">▶️ 播放</button>
+        <button onclick="pausePlay()">⏸️ 暂停</button>
+        <button onclick="reload()">🔄 重新加载</button>
+    </div>
+
+    <video id="videoElement" controls muted></video>
+
+    <h2>调试日志：</h2>
+    <div id="logs"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const logsElement = document.getElementById('logs');
+        let flvPlayer = null;
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            logsElement.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            logsElement.scrollTop = logsElement.scrollHeight;
+            console.log(message);
+        }
+
+        function init() {
+            log('🔧 初始化 FLV 播放器...', 'info');
+
+            if (!flvjs.isSupported()) {
+                log('❌ 您的浏览器不支持 FLV 播放！', 'error');
+                return;
+            }
+            log('✅ 浏览器支持 FLV 播放', 'success');
+
+            const flvUrl = '/api/flv/stream/' + encodeURIComponent('rtsp://192.168.1.100/ch1');
+            log('📡 FLV URL: ' + flvUrl, 'info');
+
+            flvPlayer = flvjs.createPlayer({
+                type: 'flv',
+                url: flvUrl,
+                isLive: true,
+                hasAudio: false
+            }, {
+                enableWorker: false,  // 禁用Worker避免兼容性问题
+                enableStashBuffer: false,
+                stashInitialSize: 128,
+                autoCleanupSourceBuffer: true
+            });
+
+            flvPlayer.attachMediaElement(videoElement);
+            log('✅ Media element 已附加', 'success');
+
+            flvPlayer.on(flvjs.Events.LOADING_COMPLETE, () => {
+                log('📥 加载完成', 'success');
+            });
+
+            flvPlayer.on(flvjs.Events.ERROR, (errorType, errorDetail) => {
+                log(`❌ 错误: ${errorType} - ${errorDetail}`, 'error');
+            });
+
+            flvPlayer.on(flvjs.Events.STATISTICS_INFO, (stats) => {
+                log(`📊 统计: 速度=${Math.round(stats.speed/1024)}KB/s, 帧=${stats.decodedFrames}, 丢帧=${stats.droppedFrames}`, 'info');
+            });
+
+            flvPlayer.load();
+            log('⏳ 开始加载流...', 'info');
+        }
+
+        function startPlay() {
+            if (!flvPlayer) {
+                log('❌ 播放器未初始化！', 'error');
+                return;
+            }
+
+            log('▶️ 尝试播放...', 'info');
+            videoElement.play()
+                .then(() => {
+                    log('✅ 播放成功！', 'success');
+                })
+                .catch((e) => {
+                    log(`❌ 播放失败: ${e.message}`, 'error');
+                });
+        }
+
+        function pausePlay() {
+            videoElement.pause();
+            log('⏸️ 已暂停', 'info');
+        }
+
+        function reload() {
+            log('🔄 重新加载页面...', 'info');
+            location.reload();
+        }
+
+        // 页面加载时自动初始化
+        window.addEventListener('load', () => {
+            log('🚀 页面加载完成', 'info');
+            init();
+        });
+    </script>
+</body>
+</html>

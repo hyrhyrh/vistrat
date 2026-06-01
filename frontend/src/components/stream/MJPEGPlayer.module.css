@@ -1,0 +1,79 @@
+/* MJPEG播放器模块化样式 */
+
+.container {
+  position: relative;
+  background-color: #000;
+}
+
+.loadingOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  color: white;
+  text-align: center;
+}
+
+.loadingText {
+  margin-top: 16px;
+}
+
+.videoElement {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #000;
+}
+
+.hiddenVideo {
+  display: none;
+}
+
+.statusIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  z-index: 15; /* 确保显示在状态覆盖层之上 */
+}
+
+.statusConnected {
+  background-color: #52c41a;
+}
+
+.statusConnecting {
+  background-color: #1890ff;
+}
+
+.statusFailed {
+  background-color: #ff4d4f;
+}
+
+.statusDisconnected {
+  background-color: #8c8c8c;
+}
+
+.statusClosed {
+  background-color: #8c8c8c;
+}
+
+.debugInfo {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 15; /* 确保显示在状态覆盖层之上 */
+}
+
+.debugLine {
+  display: block;
+}

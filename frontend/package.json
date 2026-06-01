@@ -1,0 +1,52 @@
+{
+  "name": "vistrat-frontend",
+  "version": "1.0.0",
+  "description": "Vistrat (观策) — 智能视频监控前端",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build-with-types": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ant-design/icons": "5.6.1",
+    "antd": "5.27.4",
+    "axios": "1.12.2",
+    "dayjs": "1.11.18",
+    "flv.js": "^1.6.2",
+    "highlight.js": "^11.11.1",
+    "hls.js": "1.6.13",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-grid-layout": "1.5.2",
+    "react-markdown": "10.1.0",
+    "react-router-dom": "6.30.1",
+    "react-window": "^2.2.1",
+    "react-window-infinite-loader": "^2.0.0",
+    "recharts": "3.2.1",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "swr": "^2.3.6"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "18.3.24",
+    "@types/react-dom": "18.3.7",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "@vitejs/plugin-react": "4.7.0",
+    "eslint": "8.57.1",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-refresh": "0.4.22",
+    "jsdom": "^25.0.1",
+    "typescript": "5.9.2",
+    "vite": "4.5.14",
+    "vitest": "^2.1.8"
+  }
+}

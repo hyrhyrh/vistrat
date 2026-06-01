@@ -1,0 +1,49 @@
+/* MJPEG状态覆盖层样式 */
+
+.mjpeg-error-alert {
+  /* 确保Alert组件内的所有文本都是白色 */
+  color: white !important;
+}
+
+/* 使用更具体的选择器来覆盖Ant Design默认样式 */
+.mjpeg-error-alert.ant-alert .ant-alert-message {
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.mjpeg-error-alert.ant-alert .ant-alert-description {
+  color: white !important;
+}
+
+.mjpeg-error-alert.ant-alert .ant-alert-icon {
+  color: #ff4d4f !important;
+}
+
+/* 所有子元素强制白色 */
+.mjpeg-error-alert * {
+  color: white !important;
+}
+
+.mjpeg-error-alert .ant-alert-icon * {
+  color: #ff4d4f !important;
+}
+
+/* 确保Action按钮区域的文本也是白色 */
+.mjpeg-error-alert .ant-alert-action span {
+  color: #ff4d4f !important;
+}
+
+/* 按钮文字保持原色 */
+.mjpeg-error-alert .ant-btn {
+  color: white !important;
+}
+
+/* MJPEG状态覆盖层样式 - 移除!important，让内联样式控制 */
+.mjpeg-status-overlay {
+  /* 只保留基础样式，定位由内联样式控制 */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 全屏状态样式已移除 - 现在完全通过内联样式控制 */

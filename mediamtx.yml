@@ -1,0 +1,42 @@
+# mediamtx 配置文件 — RTSP 转 HLS + 滚动录制
+#
+# 录制策略：
+#   - 所有路径默认启用录制（用 all_others 兜底），fmp4 格式
+#   - 分段时长 10s，便于 ClipService 按告警时间戳裁剪
+#   - 保留 120s 滚动缓冲（告警触发后最多 2 分钟内必须拷走）
+#   - 文件名含毫秒时间戳，便于 Python 侧解析 segment 时间窗口
+#
+# 注意：docker-compose.yml 中原本通过环境变量 (MTX_*) 配置 mediamtx，
+# 为兼容性本文件只显式指定录制相关字段 + API/HLS/RTSP 端口，
+# 其他保持 mediamtx 默认值。env 和本文件都配置时，配置文件优先。
+
+# === 控制 API ===
+api: yes
+apiAddress: :9997
+
+# === RTSP 服务 ===
+rtspAddress: :8554
+
+# === HLS 服务（低延迟模式，与原 env 配置对齐）===
+hlsAddress: :8888
+hlsVariant: lowLatency
+hlsSegmentDuration: 1s
+hlsSegmentCount: 7
+hlsAlwaysRemux: no
+
+# === 录制配置 ===
+# paths 下 all_others 作为兜底路径模板，匹配所有未显式定义的路径名
+paths:
+  all_others:
+    # 启用录制
+    record: yes
+    # 容器内录制根目录；需与 docker-compose 的 volume 挂载对齐
+    # 文件名使用本地时间（容器默认 UTC），毫秒精度
+    recordPath: /recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+    # fMP4 格式，支持无缝 concat copy remux
+    recordFormat: fmp4
+    # 分段相关
+    recordPartDuration: 1s
+    recordSegmentDuration: 10s
+    # 滚动删除：每个分段超过 120s 后清理，控制磁盘占用
+    recordDeleteAfter: 120s

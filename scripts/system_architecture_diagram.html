@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能视频监控预警系统 - 企业级架构图</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .architecture-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .title {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .layer {
+            display: flex;
+            min-height: 120px;
+            border-bottom: 2px dashed #ddd;
+            position: relative;
+        }
+        
+        .layer:last-child {
+            border-bottom: none;
+        }
+        
+        .layer-label {
+            width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            background: #f8f9fa;
+            border-right: 2px solid #e9ecef;
+        }
+        
+        .layer-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .component {
+            background: white;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 12px 20px;
+            min-width: 120px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .component:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* 不同层级的颜色方案 */
+        .frontend .component {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #00d4aa;
+        }
+        
+        .presentation .component {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-color: #ff8a65;
+        }
+        
+        .business .component {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-color: #4CAF50;
+        }
+        
+        .service .component {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            border-color: #9c27b0;
+        }
+        
+        .data .component {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            border-color: #2196f3;
+        }
+        
+        .infrastructure .component {
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            border-color: #673ab7;
+        }
+        
+        .side-components {
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 2px solid #e9ecef;
+        }
+        
+        .side-component {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: 2px solid #e91e63;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+            writing-mode: vertical-lr;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .arrow {
+            position: absolute;
+            left: 50%;
+            bottom: -15px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #4CAF50;
+            z-index: 10;
+        }
+        
+        .layer:last-child .arrow {
+            display: none;
+        }
+        
+        .tech-stack {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .tech-stack h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .tech-category {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tech-category h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+            font-size: 16px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+        
+        .tech-list {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+        
+        .subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .component-large {
+            min-width: 160px;
+            padding: 15px 25px;
+        }
+        
+        .component-small {
+            min-width: 80px;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="architecture-container">
+        <h1 class="title">AI智能视频监控预警系统 - 企业级架构图</h1>
+        
+        <!-- 前端UI层 -->
+        <div class="layer frontend">
+            <div class="layer-label">前端UI</div>
+            <div class="layer-content">
+                <div class="component">React 18<div class="subtitle">前端框架</div></div>
+                <div class="component">TypeScript 5.0<div class="subtitle">类型检查</div></div>
+                <div class="component">Ant Design 5.0<div class="subtitle">UI组件库</div></div>
+                <div class="component">Vite 4.0<div class="subtitle">构建工具</div></div>
+                <div class="component">WebSocket<div class="subtitle">实时通信</div></div>
+            </div>
+            <div class="side-components">
+                <div class="side-component">权限控制</div>
+                <div class="side-component">日志记录</div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        
+        <!-- 展示层 -->
+        <div class="layer presentation">
+            <div class="layer-label">展示层</div>
+            <div class="layer-content">
+                <div class="component component-large">视频监控界面<div class="subtitle">实时画面展示</div></div>
+                <div class="component component-large">告警管理中心<div class="subtitle">异常事件处理</div></div>
+                <div class="component">分析结果查询<div class="subtitle">历史数据检索</div></div>
+                <div class="component">提示词管理<div class="subtitle">AI模板配置</div></div>
+                <div class="component">系统监控<div class="subtitle">性能指标</div></div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        
+        <!-- 业务层 -->
+        <div class="layer business">
+            <div class="layer-label">业务层</div>
+            <div class="layer-content">
+                <div class="component">视频管理<div class="subtitle">文件上传处理</div></div>
+                <div class="component">流媒体服务<div class="subtitle">RTSP/MJPEG</div></div>
+                <div class="component">AI分析引擎<div class="subtitle">智能检测</div></div>
+                <div class="component">告警服务<div class="subtitle">实时推送</div></div>
+                <div class="component">用户认证<div class="subtitle">权限管理</div></div>
+                <div class="component">API网关<div class="subtitle">FastAPI</div></div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        
+        <!-- 服务层 -->
+        <div class="layer service">
+            <div class="layer-label">服务层</div>
+            <div class="layer-content">
+                <div class="component">视频处理器<div class="subtitle">OpenCV 4.8+</div></div>
+                <div class="component">AI模型选择器<div class="subtitle">智能调度</div></div>
+                <div class="component">存储服务<div class="subtitle">文件管理</div></div>
+                <div class="component">缓存服务<div class="subtitle">Redis缓存</div></div>
+                <div class="component">消息队列<div class="subtitle">异步处理</div></div>
+                <div class="component">健康检查<div class="subtitle">监控服务</div></div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        
+        <!-- 数据层 -->
+        <div class="layer data">
+            <div class="layer-label">数据层</div>
+            <div class="layer-content">
+                <div class="component component-large">PostgreSQL 16<div class="subtitle">主数据库</div></div>
+                <div class="component component-large">Elasticsearch 8.11<div class="subtitle">搜索引擎</div></div>
+                <div class="component component-large">MinIO 对象存储<div class="subtitle">文件存储</div></div>
+                <div class="component">Redis 7<div class="subtitle">缓存数据库</div></div>
+                <div class="component">本地文件系统<div class="subtitle">临时存储</div></div>
+            </div>
+            <div class="arrow"></div>
+        </div>
+        
+        <!-- 运行环境 -->
+        <div class="layer infrastructure">
+            <div class="layer-label">运行环境</div>
+            <div class="layer-content">
+                <div class="component">Docker容器<div class="subtitle">服务隔离</div></div>
+                <div class="component">Docker Compose<div class="subtitle">服务编排</div></div>
+                <div class="component">Nginx反向代理<div class="subtitle">负载均衡</div></div>
+                <div class="component">Linux服务器<div class="subtitle">运行环境</div></div>
+                <div class="component">云平台<div class="subtitle">部署选择</div></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 技术栈详情 -->
+    <div class="tech-stack">
+        <h3>🛠️ 详细技术栈</h3>
+        <div class="tech-grid">
+            <div class="tech-category">
+                <h4>🌐 前端技术</h4>
+                <div class="tech-list">
+                    • React 18 (并发特性)<br>
+                    • TypeScript 5.0+ (类型安全)<br>
+                    • Ant Design 5.0+ (企业UI)<br>
+                    • Vite 4.0+ (极速构建)<br>
+                    • React Router 6 (路由管理)<br>
+                    • Axios + WebSocket (网络通信)
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h4>⚙️ 后端技术</h4>
+                <div class="tech-list">
+                    • FastAPI 0.115+ (异步框架)<br>
+                    • Python 3.9+ (编程语言)<br>
+                    • Uvicorn (ASGI服务器)<br>
+                    • OpenCV 4.8+ (视频处理)<br>
+                    • Pydantic 2.5+ (数据验证)<br>
+                    • JWT + bcrypt (安全认证)
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h4>🤖 AI模型</h4>
+                <div class="tech-list">
+                    • 通义千问VL-Max (视觉理解)<br>
+                    • Moonshot-v1 (文本分析)<br>
+                    • 向量数据库 (RAG检索)<br>
+                    • 智能模型选择 (性能优化)<br>
+                    • 多模态分析 (图文理解)<br>
+                    • 自定义提示词 (场景适配)
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h4>💾 数据存储</h4>
+                <div class="tech-list">
+                    • PostgreSQL 16 (主数据库)<br>
+                    • Elasticsearch 8.11 (搜索引擎)<br>
+                    • Redis 7 (缓存数据库)<br>
+                    • MinIO (对象存储)<br>
+                    • 本地文件系统 (临时存储)<br>
+                    • 数据备份与恢复 (高可用)
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h4>🔗 通信协议</h4>
+                <div class="tech-list">
+                    • HTTP/HTTPS (RESTful API)<br>
+                    • WebSocket (实时通信)<br>
+                    • MJPEG (流媒体协议)<br>
+                    • RTSP (视频流协议)<br>
+                    • TCP/UDP (网络传输)<br>
+                    • JSON (数据格式)
+                </div>
+            </div>
+            
+            <div class="tech-category">
+                <h4>🐳 部署运维</h4>
+                <div class="tech-list">
+                    • Docker (容器化)<br>
+                    • Docker Compose (服务编排)<br>
+                    • Nginx (反向代理)<br>
+                    • Linux (运行环境)<br>
+                    • 健康检查 (服务监控)<br>
+                    • 日志管理 (故障排查)
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加交互效果
+        document.querySelectorAll('.component').forEach(component => {
+            component.addEventListener('click', function() {
+                const subtitle = this.querySelector('.subtitle');
+                if (subtitle) {
+                    alert(`${this.textContent.replace(subtitle.textContent, '').trim()}\n\n${subtitle.textContent}`);
+                }
+            });
+        });
+        
+        // 添加动画效果
+        window.addEventListener('load', function() {
+            const layers = document.querySelectorAll('.layer');
+            layers.forEach((layer, index) => {
+                setTimeout(() => {
+                    layer.style.opacity = '0';
+                    layer.style.transform = 'translateY(20px)';
+                    layer.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        layer.style.opacity = '1';
+                        layer.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

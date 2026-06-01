@@ -1,0 +1,60 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.video-display {
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-canvas {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+
+.alert-card {
+  margin-bottom: 16px;
+  border-left: 4px solid #ff4d4f;
+}
+
+.alert-card.normal {
+  border-left-color: #52c41a;
+}
+
+.control-panel {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator.connected {
+  color: #52c41a;
+}
+
+.status-indicator.disconnected {
+  color: #ff4d4f;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.video-section {
+  margin-bottom: 24px;
+}
